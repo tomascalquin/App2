@@ -1,46 +1,34 @@
-package utils;
+package Utiles;
 
-import models.Actividad;
-import models.Cultivo;
-import services.GestorCultivos;
-
+import Modelos.Cultivo;
 import java.io.*;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GestorCSV {
-    public static void cargarDesdeCSV(String ruta, GestorCultivos gestor) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(ruta));
-        String linea;
-        while ((linea = br.readLine()) != null) {
-            if (!linea.startsWith("Cultivo")) continue;
-            String[] partes = linea.split("\",\"");
-            String nombre = partes[1].replace("\"", "");
-            String variedad = partes[2];
-            double superficie = Double.parseDouble(partes[3]);
-            String codigoParcela = partes[4];
-            LocalDate fecha = LocalDate.parse(partes[5].replace("\"", ""));
-            String estado = partes[6].replace("\"", "");
-            String actividadesRaw = partes[7];
-            actividadesRaw = actividadesRaw.replace("[", "").replace("]", "").replace("\"", "");
-            String[] actividadesStr = actividadesRaw.split(",");
-            Cultivo c = new Cultivo(nombre, variedad, superficie, codigoParcela, fecha, estado);
-            for (String act : actividadesStr) {
-                if (!act.trim().isEmpty()) {
-                    c.agregarActividad(Actividad.fromString(act.trim()));
-                }
-            }
-            gestor.agregarCultivo(c);
+
+    public static List<Cultivo> leerDesdeCSV(String archivo) throws IOException {
+        List<Cultivo> cultivos = new ArrayList<>();
+        File file = new File(archivo);
+        if (!file.exists()) {
+            return cultivos; 
         }
-        br.close();
+        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                Cultivo c = Cultivo.desdeCSV(linea);
+                cultivos.add(c);
+            }
+        }
+        return cultivos;
     }
 
-    public static void guardarEnCSV(String ruta, List<Cultivo> cultivos) throws IOException {
-        BufferedWriter bw = new BufferedWriter(new FileWriter(ruta));
-        for (Cultivo c : cultivos) {
-            bw.write(c.toCSV());
-            bw.newLine();
+    public static void guardarCultivosEnCSV(String archivo, List<Cultivo> cultivos) throws IOException {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(archivo))) {
+            for (Cultivo c : cultivos) {
+                pw.println(c.toCSV());
+            }
+            System.out.println("Cultivos guardados correctamente en el archivo.");
         }
-        bw.close();
     }
 }
