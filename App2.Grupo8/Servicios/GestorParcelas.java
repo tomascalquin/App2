@@ -1,15 +1,75 @@
-package services;
+package Servicios;
 
-import models.Parcela;
+import Modelos.Cultivo;
+import Modelos.Parcela;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 public class GestorParcelas {
     private List<Parcela> parcelas;
 
     public GestorParcelas() {
         this.parcelas = new ArrayList<>();
+    }
+    
+    public static void listarParcelas(List<Parcela> parcelas) {
+        for (int i = 0; i < parcelas.size(); i++) {
+            System.out.println(i + ": " + parcelas.get(i));
+        }
+    }
+
+    public static void agregarParcela(List<Parcela> parcelas, Scanner scanner) {
+        System.out.print("Código: ");
+        String codigo = scanner.nextLine();
+        System.out.print("Tamaño (hectáreas): ");
+        double tam = Double.parseDouble(scanner.nextLine());
+        System.out.print("Ubicación: ");
+        String ubicacion = scanner.nextLine();
+        parcelas.add(new Parcela(codigo, ubicacion, tam));
+        System.out.println("Parcela agregada.");
+    }
+
+    public static void editarParcela(List<Parcela> parcelas, Scanner scanner) {
+        listarParcelas(parcelas);
+        System.out.print("Índice de la Parcela: ");
+        int i = Integer.parseInt(scanner.nextLine());
+        Parcela p = parcelas.get(i);
+        System.out.print("Nuevo tamaño: ");
+        p.setTamano(Double.parseDouble(scanner.nextLine()));
+        System.out.print("Nueva ubicación: ");
+        p.setUbicacion(scanner.nextLine());
+        System.out.println("Parcela actualizada.");
+    }
+
+    public static void eliminarParcela(List<Parcela> parcelas, List<Cultivo> cultivos, Scanner scanner) {
+        listarParcelas(parcelas);
+        System.out.print("Índice a eliminar: ");
+        int i = Integer.parseInt(scanner.nextLine());
+        String codigo = parcelas.get(i).getCodigo();
+        boolean tieneCultivos = cultivos.stream().anyMatch(c -> c.getCodigoParcela().equals(codigo));
+        if (!tieneCultivos) {
+            parcelas.remove(i);
+            System.out.println("Parcela eliminada.");
+        } else {
+            System.out.println("No se puede eliminar, tiene cultivos activos.");
+        }
+    }
+
+    public static void asignarCultivoAParcela(List<Parcela> parcelas, List<Cultivo> cultivos, Scanner scanner) {
+        GestorCultivos.listarCultivos(cultivos);
+        System.out.print("Índice del Cultivo: ");
+        int cIndex = Integer.parseInt(scanner.nextLine());
+        listarParcelas(parcelas);
+        System.out.print("Índice de la Parcela: ");
+        int pIndex = Integer.parseInt(scanner.nextLine());
+        Cultivo c = cultivos.get(cIndex);
+        Parcela p = parcelas.get(pIndex);
+        c.setCodigoParcela(p.getCodigo());
+        System.out.println("Cultivo asignado a Parcela.");
     }
 
     public void agregarParcela(Parcela p) {
@@ -31,5 +91,17 @@ public class GestorParcelas {
             }
         }
         return null;
+    }
+
+    public static List<Parcela> extraerParcelasDesdeCultivos(List<Cultivo> cultivos) {
+        Map<String, Parcela> mapa = new HashMap<>();
+        for (Cultivo c : cultivos) {
+            String codigo = c.getCodigoParcela();
+            if (!mapa.containsKey(codigo)) {
+                Parcela p = new Parcela(codigo, "", 0.0);
+                mapa.put(codigo, p);
+            }
+        }
+        return new ArrayList<>(mapa.values());
     }
 }
