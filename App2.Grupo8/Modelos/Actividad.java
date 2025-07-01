@@ -1,4 +1,4 @@
-package models;
+package Modelos;
 
 import java.time.LocalDate;
 
@@ -41,5 +41,11 @@ public class Actividad {
             act.completar();
         }
         return act;
+    }
+    public String aCSV() {
+        return tipo + "," + fecha + "," + completada;
+    }
+    public void setCompletada(boolean completada) {
+        this.completada = completada;
     }
 }
