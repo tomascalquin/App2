@@ -1,11 +1,11 @@
-package models;
+package Modelos;
 
 import java.time.LocalDate;
 
 public abstract class ElementoAgricola {
-    protected String nombre;
-    protected LocalDate fecha;
-    protected String estado;
+    private String nombre;
+    private LocalDate fecha;
+    private String estado;
 
     public ElementoAgricola(String nombre, LocalDate fecha, String estado) {
         this.nombre = nombre;
