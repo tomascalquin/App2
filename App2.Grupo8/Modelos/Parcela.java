@@ -1,4 +1,4 @@
-package models;
+package Modelos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,14 +6,27 @@ import java.util.List;
 public class Parcela {
     private String codigo;
     private String ubicacion;
-    private double tamaño;
+    private double tamano;
     private List<Cultivo> cultivos;
 
-    public Parcela(String codigo, String ubicacion, double tamaño) {
+    public Parcela(String codigo, String ubicacion, double tamano) {
         this.codigo = codigo;
         this.ubicacion = ubicacion;
-        this.tamaño = tamaño;
+        this.tamano = tamano;
         this.cultivos = new ArrayList<>();
+    }
+
+    public void setTamano(double tamano) {
+        this.tamano = tamano;
+    }
+
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
+    }
+    
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     public String getCodigo() {
@@ -24,8 +37,8 @@ public class Parcela {
         return ubicacion;
     }
 
-    public double getTamaño() {
-        return tamaño;
+    public double getTamano() {
+        return tamano;
     }
 
     public List<Cultivo> getCultivos() {
@@ -42,6 +55,6 @@ public class Parcela {
 
     @Override
     public String toString() {
-        return codigo + " - " + ubicacion + " (" + tamaño + " ha)";
+        return codigo + " - " + ubicacion + " (" + tamano + " ha)";
     }
 }
