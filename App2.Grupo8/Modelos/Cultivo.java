@@ -1,9 +1,10 @@
-package models;
+package Modelos;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 public class Cultivo extends ElementoAgricola {
     private String variedad;
@@ -11,8 +12,8 @@ public class Cultivo extends ElementoAgricola {
     private String codigoParcela;
     private List<Actividad> actividades;
 
-    public Cultivo(String nombre, String variedad, double superficie, String codigoParcela, LocalDate fechaSiembra, String estado) {
-        super(nombre, fechaSiembra, estado);
+    public Cultivo(String nombre, String variedad, double superficie, String codigoParcela, LocalDate fecha, String estado) {
+        super(nombre, fecha, estado);
         this.variedad = variedad;
         this.superficie = superficie;
         this.codigoParcela = codigoParcela;
@@ -57,11 +58,22 @@ public class Cultivo extends ElementoAgricola {
             .map(Actividad::toString)
             .collect(Collectors.joining("\",\"", "[\"", "\"]"));
         return String.format("Cultivo,\"%s\",\"%s\",%.2f,\"%s\",\"%s\",\"%s\",%s",
-                nombre, variedad, superficie, codigoParcela, fecha.toString(), estado, actStr);
+                getNombre(), variedad, superficie, codigoParcela, getFecha().toString(), getEstado(), actStr);
     }
 
     @Override
     public String toString() {
-        return nombre + " (" + variedad + ") - " + estado + " en " + codigoParcela;
+        return getNombre() + " (" + variedad + ") - " + getEstado() + " en " + codigoParcela;
+    }
+
+    public static Cultivo desdeCSV(String linea) {
+        String[] partes = linea.split(",");
+        String nombre = partes[0];
+        String variedad = partes[1];
+        double superficie = Double.parseDouble(partes[2]);
+        String codigoParcela = partes[3];
+        LocalDate fecha = LocalDate.parse(partes[4]);
+        String estado = partes[5];
+        return new Cultivo(nombre, variedad, superficie, codigoParcela, fecha, estado);
     }
 }
